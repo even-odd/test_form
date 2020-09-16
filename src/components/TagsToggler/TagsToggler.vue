@@ -10,17 +10,20 @@
     </div>
 
     <div>
-      <div class="tags_content">
+      <div class="tags-box">
         <keep-alive>
           <common-tag
               v-if="isCurrent(0)"
-              v-model="formState.common"/>
+              :changeTagContent="changeContent"
+          />
           <address-tag
               v-if="isCurrent(1)"
-              v-model="formState.address"/>
+              :changeTagContent="changeContent"
+          />
           <passport-tag
               v-if="isCurrent(2)"
-              v-model="formState.passport"/>
+              :changeTagContent="changeContent"
+          />
         </keep-alive>
       </div>
 
@@ -76,7 +79,8 @@ export default {
         },
         passport: {
           ...getPassportInitialState(),
-        }
+        },
+        noSMS: false,
       }
     };
   },
@@ -92,8 +96,14 @@ export default {
     },
 
     isCurrent (id) {
-      return this.data.id === id;
+      return this.current === id;
     },
+
+    changeContent (state, data) {
+      console.debug('stateName', state);
+      console.debug('updated data', data);
+      this.formState[state] = {...data};
+    }
   },
 };
 </script>
