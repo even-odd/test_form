@@ -1,5 +1,21 @@
+// export const ST_CHECKED =
 
-export const COMMON_REQUIRED = ['firstName', 'secondName', 'birthday', 'phone', 'groupOfClient'];
+export const DOCTORS = ['Иванов', 'Захаров', 'Чернышева'];
+export const GROUPS_CLIENT = {
+    vip: 'VIP',
+    problematic: 'Проблемные',
+    oms: 'ОМС'
+};
+
+export function getSimpleGroupsObj (value) {
+    let result = {};
+    for (let key in GROUPS_CLIENT) {
+        result[key] = value;
+    }
+
+    return result;
+}
+
 export function getCommonInitialState () {
     return {
         firstName: '',
@@ -8,9 +24,9 @@ export function getCommonInitialState () {
         birthday: null, // TODO: определиться как делать
         phone: '',
         sex: '',
-        groupOfClient: -1, // TODO: сделать числовые константы
+        groupOfClient: new Set(), // хранятся только выделенные группы
+        // groupOfClient: [], // хранятся только выделенные группы
         doctor: -1, // TODO: сделать список врачей
-        noSMS: false,
     };
 }
 
