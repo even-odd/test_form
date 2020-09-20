@@ -1,4 +1,7 @@
 // export const ST_CHECKED =
+export const VECTOR_COMMON = 'common';
+export const VECTOR_ADDRESS = 'address';
+export const VECTOR_PASSPORT = 'passport';
 
 export const DOCTORS = ['Иванов', 'Захаров', 'Чернышева'];
 export const GROUPS_CLIENT = {
@@ -21,19 +24,18 @@ export function getCommonInitialState () {
         firstName: '',
         secondName: '',
         patronymic: '', // отчество
-        birthday: null, // TODO: определиться как делать
+        birthday: null,
         phone: '',
         sex: '',
         groupOfClient: new Set(), // хранятся только выделенные группы
         // groupOfClient: [], // хранятся только выделенные группы
-        doctor: -1, // TODO: сделать список врачей
+        doctor: '',
     };
 }
 
-export const ADDRESS_REQUIRED = ['city'];
 export function getAddressInitialState () {
     return {
-        index: -1,
+        index: '',
         country: '',
         region: '',
         city: '',
@@ -42,14 +44,14 @@ export function getAddressInitialState () {
     };
 }
 
-export const PASSWORD_REQUIRED = ['typeOfDocument', 'issuedDate'];
+export const DOC_TYPES = ['Паспорт', 'Свидетельство о рождении', 'Вод. удостоверение'];
 export function getPassportInitialState () {
     return {
-        typeOfDocument: -1,// TODO: сделать числовые константы
-        series: -1,
-        number: -1,
+        typeOfDocument: '',
+        series: '',
+        numberOfDocument: '',
         issuedBy: '', // кем выдан
-        issuedDate: -1
+        issuedDate: null
     };
 }
 

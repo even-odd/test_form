@@ -1,39 +1,37 @@
 <template>
-  <div class="tags_toggler">
-    <!--  При изменении ширины - переезжает в левый бок. По-хорошему, добавить иконки -->
-    <div class="tags_list">
-      <div v-for="tag in tags"
-           :key="tag.id"
-           :class="[{ active: isCurrent(tag.id) }, 'tag_title']">
-        {{ tag.title }}
-      </div>
-    </div>
-
-    <div>
+    <div class="app">
       <div class="tags-box">
         <keep-alive>
           <common-tag
-              v-if="isCurrent(0)"
+              v-if="isCurrent(vectorCommon)"
               :changeTagContent="changeContent"
+              :setData="getDataFrom"
           />
           <address-tag
-              v-if="isCurrent(1)"
+              v-if="isCurrent(vectorAddress)"
               :changeTagContent="changeContent"
+              :setData="getDataFrom"
           />
           <passport-tag
-              v-if="isCurrent(2)"
+              v-if="isCurrent(vectorPassport)"
               :changeTagContent="changeContent"
+              :setData="getDataFrom"
           />
         </keep-alive>
-      </div>
-
-      <div>
-        <button @click="makeUser()">Создать пользователя</button>
         <span class="notify--required_fields">* - обязательные поля</span>
       </div>
-    </div>
 
-  </div>
+      <div class="user_creator">
+        <div>
+          <button @click="makeUser()">Создать пользователя</button>
+        </div>
+
+        <div>
+          <input id="sms" type="checkbox" v-model="formState.noSMS">
+          <label for="sms">Отправлять смс?</label>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script>
@@ -41,7 +39,8 @@ import CommonTag from "./CommonTag/CommonTag";
 import AddressTag from "./AddressTag/AddressTag";
 import PassportTag from "./PassportTag/PassportTag";
 
-import { getCommonInitialState, getAddressInitialState, getPassportInitialState } from './consts';
+import {getAddressInitialState, getCommonInitialState, getPassportInitialState} from './consts';
+import {VECTOR_ADDRESS, VECTOR_COMMON, VECTOR_PASSPORT} from "@/components/TagsToggler/consts";
 
 export default {
   name: "TagsToggler",
@@ -52,58 +51,205 @@ export default {
   },
   data () {
     return {
-      current: 0,
+      current: VECTOR_COMMON,
+      getDataFrom: '',
       tags: [
         {
-          id: 0,
+          id: VECTOR_COMMON,
           title: "Основная инфромация",
-          initialized: true,
+          valid: false,
         },
         {
-          id: 1,
+          id: VECTOR_ADDRESS,
           title: "Адресс",
-          initialized: false,
+          valid: false,
         },
         {
-          id: 2,
+          id: VECTOR_PASSPORT,
           title: "Паспорт",
-          initialized: false,
+          valid: false,
         },
       ],
       formState: {
-        common: {
+        [VECTOR_COMMON]: {
           ...getCommonInitialState(),
         },
-        address: {
+        [VECTOR_ADDRESS]: {
           ...getAddressInitialState(),
         },
-        passport: {
+        [VECTOR_PASSPORT]: {
           ...getPassportInitialState(),
         },
-        noSMS: false,
+        noSMS: true,
       }
     };
   },
-  methods: {
-    // Валидацию нужно делать в рамках одной страницы
-    // 1. Не давать пользователю перейти на следующий шаг, пока есть ошибки или незаполненные обязательные поля
-    // 2. Вызывать событие обновления (v-model) только, когда все данные на вкладке валидны.
-    // ! Не должно быть невалидных данных в родителе.
+  computed: {
+    vectorCommon () {
+      return VECTOR_COMMON;
+    },
 
-    makeUser () {
+    vectorAddress () {
+      return VECTOR_ADDRESS;
+    },
+
+    vectorPassport () {
+      return VECTOR_PASSPORT;
+    },
+  },
+  methods: {
+    async makeUser () {
+      let check = await this.checkCurrent();
+      if (!check) return;
+
+      let tags = this.tags;
+      for (let tag of tags) {
+
+        if (!tag.valid) {
+          alert('Заполните остальные поля в других секциях (туда/сюда)');
+          return;
+        }
+      }
+      alert('Пользователь создан!');
       console.debug('User created!');
-      console.debug('user data', this.formState);
+      console.debug('user data', {...this.formState});
+    },
+
+    updateDataForCurrent () {
+      let currTag = this.getCurrentTag();
+      console.debug('UPDATE: currTag', currTag);
+      console.debug('UPDATE: isValid', currTag.valid);
+      console.debug('UPDATE: old getDataFrom', this.getDataFrom);
+
+      if (currTag.valid) return;
+
+      console.debug('update current');
+      this.getDataFrom = this.getDataFrom ? this.getDataFrom : this.current;
+      this.getDataFrom += '1';
+    },
+
+    changeContent (state, data, vector) {
+      console.debug('stateName', state);
+      console.debug('updated data', {...data});
+      console.debug('vector', vector);
+
+      let currTag = this.getCurrentTag();
+      currTag.valid = true;
+
+      this.formState[state] = data;
+      this.current = vector;
+
+      this.getDataFrom = '';
+    },
+
+    async checkCurrent () {
+      let tag = this.getCurrentTag();
+
+      if (!tag.valid) {
+        this.updateDataForCurrent();
+
+        await setTimeout(() => undefined, 100);
+
+        if(!tag.valid) {
+          alert('Поля в текущей секции заполненны неправильно');
+          return false;
+        }
+      }
+
+      return true;
+    },
+
+    getCurrentTag () {
+      let tags = this.tags;
+      let currKey = this.current;
+
+      for (let i = tags.length - 1; i > -1; --i) {
+        let tag = tags[i];
+        console.debug('curr tag', {...tag});
+        console.debug('tag id', tag.id);
+        console.debug('current', currKey);
+        if (tag.id === currKey) return tag;
+      }
     },
 
     isCurrent (id) {
       return this.current === id;
     },
-
-    changeContent (state, data) {
-      console.debug('stateName', state);
-      console.debug('updated data', data);
-      this.formState[state] = {...data};
-    }
   },
 };
 </script>
+
+<style>
+  .app {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 10px 15px;
+    border-left: 2px dashed black;
+    border-top: 2px dashed black;
+
+    background-color: white;
+    box-shadow: 10px 10px 1px -3px rgba(0,0,0,0.75);
+  }
+
+  .error {
+    padding: 5px;
+    border-left: 2px solid brown;
+    border-bottom: 2px dashed brown;
+    max-width: 295px;
+  }
+
+  .tags-box {
+    min-width: 300px;
+    max-width: 1000px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .field label {
+    display: inline-block;
+    margin: 5px 0;
+  }
+
+  .field .hanging {
+    margin-left: -8px;
+  }
+
+  .field input {
+    display: block;
+  }
+
+  .field input[type='radio'] {
+    display: inline;
+    margin: 0 5px;
+  }
+
+  .field select {
+    display: block;
+    /*margin: 5px 0;*/
+  }
+
+  .tag--controls {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 10px 0 0 0;
+  }
+
+  .user_creator {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .user_creator > div {
+    margin: 0 5px;
+  }
+
+  .notify--required_fields {
+    margin-left: -8px;
+  }
+</style>
