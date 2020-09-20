@@ -146,9 +146,9 @@ export default {
   },
   watch: {
     setData (next) {
-      console.debug('watch setData, next', next);
-      console.debug('watch setData, current', VECTOR_ADDRESS);
-      console.debug('watch setData, index', next.indexOf(VECTOR_ADDRESS));
+      // console.debug('watch setData, next', next);
+      // console.debug('watch setData, current', VECTOR_ADDRESS);
+      // console.debug('watch setData, index', next.indexOf(VECTOR_ADDRESS));
 
       if (next.indexOf(VECTOR_ADDRESS) === -1) return;
 

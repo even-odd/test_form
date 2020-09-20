@@ -111,27 +111,27 @@ export default {
         }
       }
       alert('Пользователь создан!');
-      console.debug('User created!');
-      console.debug('user data', {...this.formState});
+      // console.debug('User created!');
+      // console.debug('user data', {...this.formState});
     },
 
     updateDataForCurrent () {
       let currTag = this.getCurrentTag();
-      console.debug('UPDATE: currTag', currTag);
-      console.debug('UPDATE: isValid', currTag.valid);
-      console.debug('UPDATE: old getDataFrom', this.getDataFrom);
+      // console.debug('UPDATE: currTag', currTag);
+      // console.debug('UPDATE: isValid', currTag.valid);
+      // console.debug('UPDATE: old getDataFrom', this.getDataFrom);
 
       if (currTag.valid) return;
 
-      console.debug('update current');
+      // console.debug('update current');
       this.getDataFrom = this.getDataFrom ? this.getDataFrom : this.current;
       this.getDataFrom += '1';
     },
 
     changeContent (state, data, vector) {
-      console.debug('stateName', state);
-      console.debug('updated data', {...data});
-      console.debug('vector', vector);
+      // console.debug('stateName', state);
+      // console.debug('updated data', {...data});
+      // console.debug('vector', vector);
 
       let currTag = this.getCurrentTag();
       currTag.valid = true;
@@ -165,9 +165,9 @@ export default {
 
       for (let i = tags.length - 1; i > -1; --i) {
         let tag = tags[i];
-        console.debug('curr tag', {...tag});
-        console.debug('tag id', tag.id);
-        console.debug('current', currKey);
+        // console.debug('curr tag', {...tag});
+        // console.debug('tag id', tag.id);
+        // console.debug('current', currKey);
         if (tag.id === currKey) return tag;
       }
     },

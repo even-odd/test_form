@@ -121,9 +121,9 @@ export default {
   },
   watch: {
     setData (next) {
-      console.debug('watch setData, next', next);
-      console.debug('watch setData, current', VECTOR_PASSPORT);
-      console.debug('watch setData, index', next.indexOf(VECTOR_PASSPORT));
+      // console.debug('watch setData, next', next);
+      // console.debug('watch setData, current', VECTOR_PASSPORT);
+      // console.debug('watch setData, index', next.indexOf(VECTOR_PASSPORT));
 
       if (next.indexOf(VECTOR_PASSPORT) === -1) return;
 
@@ -151,12 +151,12 @@ export default {
 
         if (key === 'typeOfDocument') {
           hasError |= this.checkDocTypeError();
-          console.debug('key:', key, 'hasError:', !!hasError);
+          // console.debug('key:', key, 'hasError:', !!hasError);
           continue;
         }
         hasError |= !!fields[key].$error;
 
-        console.debug('key:', key, 'hasError:', !!hasError);
+        // console.debug('key:', key, 'hasError:', !!hasError);
       }
 
       return hasError;

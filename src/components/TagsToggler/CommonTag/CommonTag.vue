@@ -287,14 +287,14 @@ export default {
         }
         hasError |= !!fields[key].$error;
 
-        console.debug('key:', key, 'hasError:', !!hasError);
+        // console.debug('key:', key, 'hasError:', !!hasError);
       }
 
       return hasError;
     },
 
     checkGroupError() {
-      console.debug('checkGroupError - groupOfClient size:', this.fields.groupOfClient.size);
+      // console.debug('checkGroupError - groupOfClient size:', this.fields.groupOfClient.size);
       return this.fields.groupOfClient.size <= 0;
     }
   }
